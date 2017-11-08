@@ -1,0 +1,28 @@
+{
+  "name": "Magic-Mirror-Module-Selfie",
+  "version": "1.0.0",
+  "description": "Selfie and social media for the Magic Mirror.",
+  "repository":
+  {
+    "type": "git",
+    "url": "git+https://github.com/txukie/MMM-Selfie"
+  },
+  "keywords": [
+    "magic mirror",
+    "smart mirror",
+    "Selfie",
+    "module"
+  ],
+  "author": "Alberto de Tena Rojas",
+  "contributors": "https://github.com/txukie/MMM-Selfie/graphs/contributors",
+  "license": "MIT",
+  "bugs":
+  {
+    "url": "https://github.com/txukie/MMM-Selfie/issues"
+  },
+  "homepage": "https://github.com/txukie/MMM-Selfie#readme",
+  "dependencies":
+  {
+    "python-shell": "latest"
+  }
+}

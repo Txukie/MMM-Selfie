@@ -1,0 +1,20 @@
+{
+  "message": "Hello %person, nice to meet you!",
+  "title": "Facial-Recognition",
+  "stranger": "stranger",
+  "CMD_TELBOT_SELFIE": "Take a selfie",
+  "CMD_TELBOT_FACEBOOK": "Take a selfie and post it on Facebook",
+  "CMD_TELBOT_TWITTER": "Take a selfie and post it on Twitter",
+  "CMD_TELBOT_TUMBLR": "Take a selfie and post it on Tumblr",
+  "CMD_TELBOT_INSTAGRAM": "Take a selfie and post it on Instagram",
+  "CMD_ASSTNT_SELFIE": "selfie",
+  "CMD_ASSTNT_SELFIE_DESCRIPTION": "Take a selfie",
+  "CMD_ASSTNT_FACEBOOK": "Facebook",
+  "CMD_ASSTNT_FACEBOOK_DESCRIPTION": "Take a selfie and post it on Facebook",
+  "CMD_ASSTNT_TWITTER": "Twitter",
+  "CMD_ASSTNT_TWITTER_DESCRIPTION": "Take a selfie and post it on Twitter",
+  "CMD_ASSTNT_TUMBLR": "Tumblr",
+  "CMD_ASSTNT_TUMBLR_DESCRIPTION": "Take a selfie and post it on Tumblr",
+  "CMD_ASSTNT_INSTAGRAM": "Instagram",
+  "CMD_ASSTNT_INSTAGRAM_DESCRIPTION": "Take a selfie and post it on Instagram"
+}
