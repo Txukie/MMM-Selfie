@@ -1,0 +1,5 @@
+# ignore all files in the build/ directory
+node_modules/
+# ignore doc/notes.txt, but not doc/server/arch.txt
+selfie/*.pyc
+selfie/*.jpg
