@@ -75,17 +75,17 @@ def takeSelfie():
 def postonfb(filename):
   # Fill in the values noted in previous steps here
   cfg = {
-    "page_id"      : config.get("Facebook_pageid")
-    "access_token" : config.get("Facebook_token")
+    "page_id"      : "184561715439884",  # Step 1   184561715439884
+    "access_token" : "EAACDZB88yvxkBAOpX32BsukaJq1yXlNs0ZCUicS3hzUZALwy7YtSb0D35TL5lMczuxrMMbD2wuvUvj4MEVpW0LsGQaN09ITO0LNKqauUlP3mNSaFD42kNPt8hBoPIuHxSxZA4CvyeVIvr5r52q3scQGmYUvu0WoZD"   # Step 3
     }
 
-  FACEBOOK_PROFILE_ID = ''
+  FACEBOOK_PROFILE_ID = '759644078'
   api = get_api(cfg)
   msg = "Probando la API de Facebook con Python!"
 
   try:
     #fb_response = api.put_wall_post('Hello from Python',profile_id = FACEBOOK_PROFILE_ID)
-    fb_response = api.put_photo(image=open(filename, 'rb'),message='Testing python API with this stupid photo!')
+    fb_response = api.put_photo(image=open(filename, 'rb'),message='Testing python API with this stupid photo!',profile_id = FACEBOOK_PROFILE_ID)
     print(fb_response)
 
   except facebook.GraphAPIError as e:

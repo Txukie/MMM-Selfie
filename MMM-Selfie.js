@@ -12,7 +12,13 @@ Module.register('MMM-Selfie',
 	defaults:
 	{
 		useFacebook: false,
-		facebookOauthFile: "",
+		Facebook_pageid: "",
+		Facebook_token: "",
+		twitter_access_key: "",
+		twitter_access_secret: "",
+		twitter_consumer_key: "",
+		twitter_consumer_secret: "",
+		twitter_new_status: "",
 		useInstagram: false,
 		instagramUsername: "",
 		instagramPassword: "",
@@ -107,7 +113,7 @@ Module.register('MMM-Selfie',
 	{
     	Log.info('Trying to get a selfie to Twitter');
     	handler.response('Trying to get a selfie to Twitter');
-    	this.sendSocketNotification('SELFIE', this.config);
+    	this.sendSocketNotification('SELFIE_TWITTER', this.config);
   	},
   	cmd_tumblr : function (command, handler)
 	{
