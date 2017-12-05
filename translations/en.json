@@ -1,7 +1,4 @@
 {
-  "message": "Hello %person, nice to meet you!",
-  "title": "Facial-Recognition",
-  "stranger": "stranger",
   "CMD_TELBOT_SELFIE": "Take a selfie",
   "CMD_TELBOT_FACEBOOK": "Take a selfie and post it on Facebook",
   "CMD_TELBOT_TWITTER": "Take a selfie and post it on Twitter",

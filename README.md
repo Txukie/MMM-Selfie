@@ -11,50 +11,17 @@ The entry in config.js can look like the following. (NOTE: You only have to add 
 	module: 'MMM-Selfie',
 	config:
 	{
-		useFacebook: false,
-		Facebook_pageid: "",
-		Facebook_token: "",
-		twitter_access_key: "",
-		twitter_access_secret: "",
-		twitter_consumer_key: "",
-		twitter_consumer_secret: "",
-		twitter_new_status: "",
-		useInstagram: false,
-		instagramUsername: "",
-		instagramPassword: "",
-		useTwitter: "",
-		twitterOauthFile: "",
-		useTumblr: false,
-		tumblrOauthFile: "",
-		useUSBCam: false,
-		maxResY: 800,
-		maxResX: 800
-
-		// 1=LBPH | 2=Fisher | 3=Eigen
-		// recognitionAlgorithm: 1,
-		// Threshold for the confidence of a recognized face before it's considered a
-		// positive match.  Confidence values below this threshold will be considered
-		// a positive match because the lower the confidence value, or distance, the
-		// more confident the algorithm is that the face was correctly detected.
-		// lbphThreshold: 50,
-		// fisherThreshold: 250,
-		// eigenThreshold: 3000,
-		// force the use of a usb webcam on raspberry pi (on other platforms this is always true automatically)
-		// useUSBCam: false,
-		// Path to your training xml
-		// trainingFile: 'modules/MMM-Facial-Recognition/training.xml',
-		// recognition intervall in seconds (smaller number = faster but CPU intens!)
-		// interval: 2,
-		// Logout delay after last recognition so that a user does not get instantly logged out if he turns away from the mirror for a few seconds
-		// logoutDelay: 15,
-		// Array with usernames (copy and paste from training script)
-		// users: [],
-		// Module set used for strangers and if no user is detected
-		// defaultClass: "default",
-		//Set of modules which should be shown for every user
-		// everyoneClass: "everyone",
-		// Boolean to toggle welcomeMessage
-		// welcomeMessage: true
+	    useUSBCam: false,
+	    maxResX: 2592,
+	    maxResY: 1944,
+	    cameraRotation: 0,
+	    Facebook_pageid: '',
+	    Facebook_token: '',
+	    Facebook_ProfileId: '',
+	    twitter_access_key: '',
+	    twitter_access_secret: '',
+	    twitter_consumer_key: '',
+	    twitter_consumer_secret: ''
 	}
 }
 ```

@@ -23,8 +23,9 @@ import picamera
 import signal
 import datetime
 import os
+import pygame
+import facebook
 from twitter import *
-
 
 def to_node(type, message):
     # convert to json and print (node helper will read from stdout)
@@ -35,43 +36,15 @@ def to_node(type, message):
     # stdout has to be flushed manually to prevent delays in the node helper communication
     sys.stdout.flush()
 
-
-to_node("status", "Selfie module started...")
-to_node("status", 'Loading user data...')
-
-# set algorithm to be used based on setting in config.js
-if config.get("useFacebook"):
-    to_node("status", "Initializing Facebook submodule")
-    #model = cv2.createLBPHFaceRecognizer(threshold=config.get("lbphThreshold"))
-if config.get("useInstagram"):
-    to_node("status", "Initializing Instagram submodule")
-    #model = cv2.createFisherFaceRecognizer(threshold=config.get("fisherThreshold"))
-if config.get("useTwitter"):
-    to_node("status", "Initializing Twitter submodule")
-    #model = cv2.createEigenFaceRecognizer(threshold=config.get("eigenThreshold"))
-if config.get("useTumblr"):
-    to_node("status", "Initializing Tumblr submodule")
-    #model = cv2.createEigenFaceRecognizer(threshold=config.get("eigenThreshold"))
-
-# get camera
+# get Picamera or webcam
 camera = config.get_camera()
 
-def shutdown(self, signum):
+def shutdown():
     to_node("status", 'Shutdown: Cleaning up camera...')
     camera.close()
     quit()
 
 signal.signal(signal.SIGINT, shutdown)
-
-# sleep for a second to let the camera warm up
-time.sleep(1)
-
-
-def takeSelfie():
-    filename = config.path_to_file + '/selfie_' + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + '.jpg'
-    image = camera.capture(filename)
-    to_node("status", 'Selfie taken for Twitter')
-    return filename
 
 def postontwitter(filename):
     cfg = {
@@ -79,7 +52,7 @@ def postontwitter(filename):
         "access_secret"   : config.get("twitter_access_secret"),
         "consumer_key"    : config.get("twitter_consumer_key"),
         "consumer_secret" : config.get("twitter_consumer_secret"),
-        "new_status"      : config.get("twitter_new_status")
+        "new_status"      : config.get("new_status")
     }
 
     #-----------------------------------------------------------------------
@@ -107,8 +80,52 @@ def postontwitter(filename):
 
     results = twitter_post.statuses.update(status = cfg["new_status"], media_ids = id_img)
 
-    print "updated status: %s" % cfg["new_status"]
+def get_fb_api(cfg):
+  graph = facebook.GraphAPI(cfg['access_token'])
+  # Get page token to post as the page. You can skip 
+  # the following if you want to post as yourself. 
+  resp = graph.get_object('me/accounts')
+  page_access_token = None
+  for page in resp['data']:
+    if page['id'] == cfg['page_id']:
+      page_access_token = page['access_token']
+  graph = facebook.GraphAPI(page_access_token)
+  return graph
 
-if __name__ == "__main__":
-      filename = takeSelfie()
-      postontwitter(filename)
+def postonfb(filename):
+  # Fill in the values noted in previous steps here
+  cfg = {
+    "page_id"      : config.get("Facebook_pageid"),
+    "access_token" : config.get("Facebook_token"),
+    "new_status"   : config.get("new_status"),
+    "profile_id"   : config.get("Facebook_ProfileId")
+    }
+
+  FACEBOOK_PROFILE_ID = cfg["profile_id"]
+  api = get_fb_api(cfg)
+  msg = cfg["new_status"]
+
+  try:
+    #fb_response = api.put_wall_post('Hello from Python',profile_id = FACEBOOK_PROFILE_ID)
+    fb_response = api.put_photo(image=open(filename, 'rb'),message=msg,profile_id = FACEBOOK_PROFILE_ID)
+    print(fb_response)
+
+  except facebook.GraphAPIError as e:
+    print('Something went wrong:' + e.type + e.message)
+
+def takeSelfie():
+    pygame.init()
+    pygame.mixer.music.load(config.path_to_file + "/../resources/shutter.mp3")
+    filename = config.path_to_file + '/selfie_' + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + '.jpg'
+    camera.start_preview()
+    time.sleep(3)
+    pygame.mixer.music.play()
+    image = camera.capture(filename)
+    camera.stop_preview()
+    to_node("status", 'Selfie taken')
+    return filename
+
+# Main Loop
+photofile = takeSelfie()
+postontwitter(photofile)
+shutdown()

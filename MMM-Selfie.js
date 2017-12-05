@@ -11,31 +11,24 @@ Module.register('MMM-Selfie',
 {
 	defaults:
 	{
-		useFacebook: false,
-		Facebook_pageid: "",
-		Facebook_token: "",
-		twitter_access_key: "",
-		twitter_access_secret: "",
-		twitter_consumer_key: "",
-		twitter_consumer_secret: "",
-		twitter_new_status: "",
-		useInstagram: false,
-		instagramUsername: "",
-		instagramPassword: "",
-		useTwitter: "",
-		twitterOauthFile: "",
-		useTumblr: false,
-		tumblrOauthFile: "",
-		useUSBCam: false,
-		maxResY: 800,
-		maxResX: 800
-	},
+    useUSBCam: false,
+    maxResX: 2592,
+    maxResY: 1944,
+    cameraRotation: 0,
+    Facebook_pageid: '',
+    Facebook_token: '',
+    Facebook_ProfileId: '',
+    twitter_access_key: '',
+    twitter_access_secret: '',
+    twitter_consumer_key: '',
+    twitter_consumer_secret: ''
+  },
 
 	// Define required translations.
 	getTranslations: function() {
 		return {
 			en: "translations/en.json",
-      		es: "translations/es.json",
+      es: "translations/es.json",
 			fr: "translations/fr.json"
 		};
 	},
@@ -95,42 +88,96 @@ Module.register('MMM-Selfie',
         callback: 'cmd_instagram',
       })
     }
-    },
+  },
 
-    cmd_selfie : function (command, handler)
+  cmd_selfie : function (command, handler)
 	{
-    	Log.info('Trying to get a selfie');
-    	handler.response('Trying to get a selfie');
+      Log.info('Trying to get a Selfie');
+      this.config.args = handler.args;
+      this.config.message = handler.message;
+      this.config.callbacks = handler.callbacks;
+      if (this.config.args != "")
+      {
+        this.config.new_status = this.config.args;
+      }
+      else
+      {
+        this.config.new_status = this.config.message.substr(7);
+      }
+    	handler.reply('TEXT','Trying to get a selfie with message ' + this.config.new_status,{parse_mode:'Markdown'});
     	this.sendSocketNotification('SELFIE', this.config);
-  	},
-  	cmd_facebook : function (command, handler)
+ 	},
+ 	cmd_facebook : function (command, handler)
 	{
     	Log.info('Trying to get a selfie to Facebook');
-    	handler.response('Trying to get a selfie to Facebook');
+      this.config.args = handler.args;
+      this.config.message = handler.message;
+      this.config.callbacks = handler.callbacks;
+      if (this.config.args != "")
+      {
+        this.config.new_status = this.config.args;
+      }
+      else
+      {
+        this.config.new_status = this.config.message.substr(9);
+      }
+    	handler.reply('TEXT','Trying to get a selfie to Facebook with message ' + this.config.new_status,{parse_mode:'Markdown'});
     	this.sendSocketNotification('SELFIE_FACEBOOK', this.config);
-  	},
-  	cmd_twitter : function (command, handler)
+ 	},
+	cmd_twitter : function (command, handler)
 	{
     	Log.info('Trying to get a selfie to Twitter');
-    	handler.response('Trying to get a selfie to Twitter');
+      this.config.args = handler.args;
+      this.config.message = handler.message;
+      this.config.callbacks = handler.callbacks;
+      if (this.config.args != "")
+      {
+        this.config.new_status = this.config.args;
+      }
+      else
+      {
+        this.config.new_status = this.config.message.substr(8);
+      }
+    	handler.reply('TEXT','Trying to get a selfie to Twitter with message ' + this.config.new_status,{parse_mode:'Markdown'});
     	this.sendSocketNotification('SELFIE_TWITTER', this.config);
-  	},
-  	cmd_tumblr : function (command, handler)
+ 	},
+ 	cmd_tumblr : function (command, handler)
 	{
     	Log.info('Trying to get a selfie to Tumblr');
-    	handler.response('Trying to get a selfie to Tumblr');
+      this.config.args = handler.args;
+      this.config.message = handler.message;
+      this.config.callbacks = handler.callbacks;
+      if (this.config.args != "")
+      {
+        this.config.new_status = this.config.args;
+      }
+      else
+      {
+        this.config.new_status = this.config.message.substr(7);
+      }
+    	handler.reply('TEXT','Trying to get a selfie to Tumblr with message ' + this.config.new_status,{parse_mode:'Markdown'});
     	this.sendSocketNotification('SELFIE', this.config);
-  	},
-  	cmd_instagram : function (command, handler)
+ 	},
+ 	cmd_instagram : function (command, handler)
 	{
-    	Log.info('Trying to get a selfie to Instagram');
-    	handler.response('Trying to get a selfie to Instagram');
-    	this.sendSocketNotification('SELFIE', this.config);
-  	},
+      Log.info('Trying to get a selfie to Instagram');
+      this.config.args = handler.args;
+      this.config.message = handler.message;
+      this.config.callbacks = handler.callbacks;
+      if (this.config.args != "")
+      {
+        this.config.new_status = this.config.args;
+      }
+      else
+      {
+        this.config.new_status = this.config.message.substr(10);
+      }
+      handler.reply('TEXT','Trying to get a selfie to Instagram with message ' + this.config.new_status,{parse_mode:'Markdown'});
+      this.sendSocketNotification('SELFIE', this.config);
+ 	},
 
 	start: function()
 	{
-		//this.sendSocketNotification('CONFIG', this.config);
-		Log.info('Starting module: ' + this.name);
+	  Log.info('Starting module: ' + this.name);
 	}
 });

@@ -22,7 +22,10 @@ import config
 import picamera
 import signal
 import datetime
+import os
+import pygame
 import facebook
+from twitter import *
 
 def to_node(type, message):
     # convert to json and print (node helper will read from stdout)
@@ -33,65 +36,51 @@ def to_node(type, message):
     # stdout has to be flushed manually to prevent delays in the node helper communication
     sys.stdout.flush()
 
-
-to_node("status", "Selfie module started...")
-to_node("status", 'Loading user data...')
-
-# set algorithm to be used based on setting in config.js
-if config.get("useFacebook"):
-    to_node("status", "Initializing Facebook submodule")
-    #model = cv2.createLBPHFaceRecognizer(threshold=config.get("lbphThreshold"))
-if config.get("useInstagram"):
-    to_node("status", "Initializing Instagram submodule")
-    #model = cv2.createFisherFaceRecognizer(threshold=config.get("fisherThreshold"))
-if config.get("useTwitter"):
-    to_node("status", "Initializing Twitter submodule")
-    #model = cv2.createEigenFaceRecognizer(threshold=config.get("eigenThreshold"))
-if config.get("useTumblr"):
-    to_node("status", "Initializing Tumblr submodule")
-    #model = cv2.createEigenFaceRecognizer(threshold=config.get("eigenThreshold"))
-
-# get camera
+# get Picamera or webcam
 camera = config.get_camera()
 
-def shutdown(self, signum):
+def shutdown():
     to_node("status", 'Shutdown: Cleaning up camera...')
     camera.close()
     quit()
 
 signal.signal(signal.SIGINT, shutdown)
 
-# sleep for a second to let the camera warm up
-time.sleep(1)
-
-
-def takeSelfie():
-    filename = config.path_to_file + '/selfie_' + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + '.jpg'
-    image = camera.capture(filename)
-    to_node("status", 'Selfie taken for Facebook')
-    return filename
-
-
-def postonfb(filename):
-  # Fill in the values noted in previous steps here
-  cfg = {
-    "page_id"      : "184561715439884",  # Step 1   184561715439884
-    "access_token" : "EAACDZB88yvxkBAOpX32BsukaJq1yXlNs0ZCUicS3hzUZALwy7YtSb0D35TL5lMczuxrMMbD2wuvUvj4MEVpW0LsGQaN09ITO0LNKqauUlP3mNSaFD42kNPt8hBoPIuHxSxZA4CvyeVIvr5r52q3scQGmYUvu0WoZD"   # Step 3
+def postontwitter(filename):
+    cfg = {
+        "access_key"      : config.get("twitter_access_key"),
+        "access_secret"   : config.get("twitter_access_secret"),
+        "consumer_key"    : config.get("twitter_consumer_key"),
+        "consumer_secret" : config.get("twitter_consumer_secret"),
+        "new_status"      : config.get("new_status")
     }
 
-  FACEBOOK_PROFILE_ID = '759644078'
-  api = get_api(cfg)
-  msg = "Probando la API de Facebook con Python!"
+    #-----------------------------------------------------------------------
+    # create twitter API objects
+    #-----------------------------------------------------------------------
+    twitter_upload = Twitter(domain='upload.twitter.com',
+        auth = OAuth(cfg["access_key"], cfg["access_secret"], cfg["consumer_key"], cfg["consumer_secret"]))
 
-  try:
-    #fb_response = api.put_wall_post('Hello from Python',profile_id = FACEBOOK_PROFILE_ID)
-    fb_response = api.put_photo(image=open(filename, 'rb'),message='Testing python API with this stupid photo!',profile_id = FACEBOOK_PROFILE_ID)
-    print(fb_response)
+    #-----------------------------------------------------------------------
+    # post a new status
+    # twitter API docs: https://dev.twitter.com/rest/reference/post/statuses/update
+    #-----------------------------------------------------------------------
 
-  except facebook.GraphAPIError as e:
-    print('Something went wrong:' + e.type + e.message)
+    with open(filename, "rb") as imagefile:
+        imagedata = imagefile.read()
 
-def get_api(cfg):
+    filesize = os.path.getsize(filename)
+
+    id_img = twitter_upload.media.upload(command="INIT",total_bytes=filesize,media_type='image/jpeg')["media_id_string"]
+    twitter_upload.media.upload(command="APPEND",media_id=id_img,segment_index=0,media=imagedata)
+    twitter_upload.media.upload(command="FINALIZE",media_id=id_img)
+
+    twitter_post = Twitter(
+        auth = OAuth(cfg["access_key"], cfg["access_secret"], cfg["consumer_key"], cfg["consumer_secret"]))
+
+    results = twitter_post.statuses.update(status = cfg["new_status"], media_ids = id_img)
+
+def get_fb_api(cfg):
   graph = facebook.GraphAPI(cfg['access_token'])
   # Get page token to post as the page. You can skip 
   # the following if you want to post as yourself. 
@@ -102,11 +91,41 @@ def get_api(cfg):
       page_access_token = page['access_token']
   graph = facebook.GraphAPI(page_access_token)
   return graph
-  # You can also skip the above if you get a page token:
-  # http://stackoverflow.com/questions/8231877/facebook-access-token-for-pages
-  # and make that long-lived token as in Step 3
 
-if __name__ == "__main__":
-  filename = takeSelfie()
-  postonfb(filename)
+def postonfb(filename):
+  # Fill in the values noted in previous steps here
+  cfg = {
+    "page_id"      : config.get("Facebook_pageid"),
+    "access_token" : config.get("Facebook_token"),
+    "new_status"   : config.get("new_status"),
+    "profile_id"   : config.get("Facebook_ProfileId")
+    }
 
+  FACEBOOK_PROFILE_ID = cfg["profile_id"]
+  api = get_fb_api(cfg)
+  msg = cfg["new_status"]
+
+  try:
+    #fb_response = api.put_wall_post('Hello from Python',profile_id = FACEBOOK_PROFILE_ID)
+    fb_response = api.put_photo(image=open(filename, 'rb'),message=msg,profile_id = FACEBOOK_PROFILE_ID)
+    print(fb_response)
+
+  except facebook.GraphAPIError as e:
+    print('Something went wrong:' + e.type + e.message)
+
+def takeSelfie():
+    pygame.init()
+    pygame.mixer.music.load(config.path_to_file + "/../resources/shutter.mp3")
+    filename = config.path_to_file + '/selfie_' + datetime.datetime.now().strftime("%Y%m%d_%H%M%S") + '.jpg'
+    camera.start_preview()
+    time.sleep(3)
+    pygame.mixer.music.play()
+    image = camera.capture(filename)
+    camera.stop_preview()
+    to_node("status", 'Selfie taken')
+    return filename
+
+# Main Loop
+photofile = takeSelfie()
+postonfb(photofile)
+shutdown()

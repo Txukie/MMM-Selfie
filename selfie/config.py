@@ -34,11 +34,15 @@ def get_camera():
         if get("useUSBCam") == False:
             import picamera
             camera = picamera.PiCamera()
+            camera.resolution = (get("maxResX"),get("maxResY"))
+            camera.rotation = get("cameraRotation")
             return camera
-        else:
-            raise Exception
-    except Exception:
-        import webcam
-        to_node("status", "Webcam selected...")
-        return webcam.OpenCVCapture(device_id=0)
-    to_node("status", "-" * 20)
+    #    else:
+    #        raise Exception
+    #except Exception:
+    #    import webcam
+    #    to_node("status", "Webcam selected...")
+    #    return webcam.OpenCVCapture(device_id=0)
+    #to_node("status", "-" * 20)
+    except Exception as e:
+        to_node("status", e.message)

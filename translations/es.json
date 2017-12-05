@@ -1,7 +1,4 @@
 {
-  "message": "Hola %person, ¡que bueno verte de nuevo!",
-  "title": "Selfie",
-  "stranger": "desconocido",
   "CMD_TELBOT_SELFIE": "Take a selfie",
   "CMD_TELBOT_FACEBOOK": "Take a selfie and post it on Facebook",
   "CMD_TELBOT_TWITTER": "Take a selfie and post it on Twitter",
