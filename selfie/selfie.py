@@ -23,6 +23,7 @@ import picamera
 import signal
 import datetime
 import os
+import glob
 import pygame
 import facebook
 from twitter import *
@@ -45,6 +46,12 @@ def shutdown():
     quit()
 
 signal.signal(signal.SIGINT, shutdown)
+
+def cleanup():
+  to_node("status", 'Cleaning up storage folder of old photos')
+  for fn in glob.iglob(config.path_to_file + '/selfie_' + '*.jpg'):
+    os.remove(fn)
+    to_node("status", 'Removing file ' + fn)
 
 def postontwitter(filename):
     cfg = {
@@ -126,5 +133,6 @@ def takeSelfie():
     return filename
 
 # Main Loop
+cleanup()
 photofile = takeSelfie()
 shutdown()
